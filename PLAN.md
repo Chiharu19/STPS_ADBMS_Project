@@ -60,6 +60,10 @@ Tables:
 - middlename (VARCHAR 50)
 - lastname (VARCHAR 50)
 
+*subjects*
+- id (INT, PK, AI)
+- name (VARCHAR 50)
+
 *class-subjects*
 - id (INT, PK, AI)
 - teacher\_id (INT, FK to teachers(id))
@@ -94,4 +98,78 @@ NOTES:
 	- index [student\_id, teacher\_id, class\_subject\_id] for faster queries
 
 
- 
+**SCHEMA in MYSQL CODE**
+CREATE TABLE roles (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    role_name ENUM('admin', 'teacher', 'student') NOT NULL
+);
+
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    role_id INT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (role_id) REFERENCES roles(id)
+);
+
+CREATE TABLE classes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE students (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    firstname VARCHAR(50) NOT NULL,
+    middlename VARCHAR(50),
+    lastname VARCHAR(50) NOT NULL,
+    class_id INT NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (class_id) REFERENCES classes(id)
+);
+
+CREATE TABLE teachers (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    firstname VARCHAR(50) NOT NULL,
+    middlename VARCHAR(50),
+    lastname VARCHAR(50) NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+CREATE TABLE subjects (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE class_subjects (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    teacher_id INT NOT NULL,
+    subject_id INT NOT NULL,
+    class_id INT NOT NULL,
+    FOREIGN KEY (teacher_id) REFERENCES teachers(id),
+    FOREIGN KEY (subject_id) REFERENCES subjects(id),
+    FOREIGN KEY (class_id) REFERENCES classes(id)
+);
+
+CREATE TABLE performances (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    student_id INT NOT NULL,
+    class_subject_id INT NOT NULL,
+    grade FLOAT NOT NULL,
+    remarks TEXT,
+    recorded_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (student_id) REFERENCES students(id),
+    FOREIGN KEY (class_subject_id) REFERENCES class_subjects(id)
+);
+
+CREATE TABLE attendance (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    student_id INT NOT NULL,
+    class_subject_id INT NOT NULL,
+    date DATE NOT NULL,
+    status ENUM('present', 'absent', 'late') NOT NULL,
+    FOREIGN KEY (student_id) REFERENCES students(id),
+    FOREIGN KEY (class_subject_id) REFERENCES class_subjects(id)
+); 
