@@ -16,6 +16,7 @@
 **User Roles/Functionalities**
 - *Admin*
 	- can ADD / REMOVE TEACHERS and STUDENTS
+	- can APPROVE of incoming creation of user accounts
 - *Teachers*
 	- can ADD / UPDATE STUDENT'S performance/attendance
 	- can VIEW performance reports of every CLASS per SUBJECT
@@ -41,7 +42,8 @@ Tables:
 *users*
 - id (INT, PK, AI)
 - username (VARCHAR 50)
-- password (VARCHAR 255)
+- password (VARCHAR 255, hashed)
+- gmail (VARCHAR 255, encrypted)
 - role\_id (INT, FK to roles(id))
 - created\_at (DATETIME)
 
